@@ -1,24 +1,37 @@
-module.exports = {
+const target = process.env.npm_lifecycle_event
+const isProductionMode = target === 'build'
+
+const config = {
   plugins: [
+    require('precss')({
+      // Disable warning "used without a fallback"
+      'properties': { warnings: false }
+    }),
     require('postcss-easy-import'),
-    require('@solislab/postcss-type')({ rootSize: '16px' }),
+    require('@solislab/postcss-type')({rootSize: '16px'}),
     require('postcss-mixins'),
     require('postcss-percentage'),
-    require('postcss-calc'),
-    require('postcss-preset-env')({
-      stage: 3,
-      features: {
-        'custom-properties': {
-          preserve: false
-        },
-        'custom-media-queries': true,
-        'nesting-rules': true
-      }
+    require('postcss-inline-svg'),
+    require('postcss-color-function'),
+    require('autoprefixer'),
+    require('postcss-automath'),
+    require('postcss-hexrgba'),
+    require('postcss-extend'),
+    require('postcss-each'),
+    require('postcss-critical-split')({
+      'output': isProductionMode ? 'rest' : 'input'
     }),
-    require('postcss-flexbugs-fixes'),
-    require('postcss-selector-matches'),
-    require('postcss-will-change'),
-    require('postcss-object-fit-images'),
-    require('autoprefixer')
+    ...(isProductionMode
+        ? [
+          require('cssnano')({
+            autoprefixer: false,
+            zindex: false
+          })
+        ]
+        : [
+        ]
+    )
   ]
 }
+
+module.exports = config

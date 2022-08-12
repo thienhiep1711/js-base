@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "scripts/*": ["src/scripts/*"],
+      "styles/*": ["src/styles/*"],
+      "lib/*": ["src/scripts/lib/*"],
+      "modules/*": ["src/modules/*"],
+      "css-modules/*": ["src/css-modules/*"],
+      "uses/*": ["src/scripts/uses/*"],
+      "mixins/*": ["src/scripts/mixins/*"]
+    }
+  },
+  "include": ["src/**/*.js"],
+  "exclude": ["node_modules", "**/node_modules"]
+}

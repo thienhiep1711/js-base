@@ -1,4 +1,4 @@
-/* global Element, Promise, getComputedStyle, CustomEvent */
+/* global Promise, getComputedStyle, CustomEvent */
 import { makeArray, curry, getProp, parseOptions, setProp, partial, pipe, map, whileDo } from 'lib/utils'
 import Tweezer from 'tweezer.js'
 
@@ -164,14 +164,24 @@ const _off = (event, handler, capture, el) => {
   return el
 }
 
-const matches = (selector, el) => (
-  Element.prototype.matches ||
-  Element.prototype.matchesSelector ||
-  Element.prototype.mozMatchesSelector ||
-  Element.prototype.msMatchesSelector ||
-  Element.prototype.oMatchesSelector ||
-  Element.prototype.webkitMatchesSelector
-).apply(el, [selector])
+const matches = (selector, el) => {
+  const funcs = [
+    'matches',
+    'matchesSelector',
+    'mozMatchesSelector',
+    'msMatchesSelector',
+    'oMatchesSelector',
+    'webkitMatchesSelector'
+  ]
+
+  for (const func of funcs) {
+    if (typeof el[func] === 'function') {
+      return el[func](selector)
+    }
+  }
+
+  return false
+}
 
 /**
  * Attach event handler for a list of events.
@@ -362,6 +372,10 @@ const getValue = getProp('value')
 
 const remove = (el) => el.parentNode.removeChild(el)
 
+const isIosDevice = typeof window !== 'undefined' && window.navigator && window.navigator.platform && (/iPad|iPhone|iPod/.test(window.navigator.platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+
+const handleize = (string) => string.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '').replace(/^-/, '')
+
 export {
   addClass,
   append,
@@ -403,5 +417,7 @@ export {
   setStyle,
   toggleClass,
   triggerReflow,
-  trigger
+  trigger,
+  isIosDevice,
+  handleize
 }
